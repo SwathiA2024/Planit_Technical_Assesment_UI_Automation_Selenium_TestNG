@@ -1,0 +1,25 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build & Test') {
+            steps {
+                // Run Maven clean test
+                sh 'mvn clean test'
+            }
+        }
+    }
+
+    post {
+        always {
+            // Archive TestNG reports (JUnit XML format)
+            junit 'target/surefire-reports/*.xml'
+        }
+    }
+}
