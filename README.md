@@ -99,6 +99,9 @@ Extent Report:
 <img width="940" height="469" alt="image" src="https://github.com/user-attachments/assets/32329c77-39f0-43c6-a576-5a627980825c" />
 <img width="955" height="462" alt="image" src="https://github.com/user-attachments/assets/b5675a56-4b1d-4af6-ba7a-c7ee75200dc7" />
 
+Failure Report:
+<img width="953" height="359" alt="image" src="https://github.com/user-attachments/assets/1f52cf18-06c2-445b-bbe5-4eafb9ad27a9" />
+
 Jenkins run:
 <img width="948" height="464" alt="image" src="https://github.com/user-attachments/assets/a35c27ed-eed6-4345-a098-b796746e9732" />
 
