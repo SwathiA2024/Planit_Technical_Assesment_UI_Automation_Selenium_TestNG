@@ -11,11 +11,15 @@ import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.support.PageFactory;
 import org.testng.ITestResult;
 import org.testng.annotations.*;
-import pages.*;
+import pages.CartPage;
+import pages.ContactPage;
+import pages.HomePage;
+import pages.ShopPage;
 import utils.ConfigReaderUtil;
 import utils.ExtentManager;
 import utils.LogUtil;
 import utils.ScreenshotUtils;
+
 
 import java.lang.reflect.Method;
 import java.time.Duration;
@@ -37,23 +41,44 @@ public class BaseTest {
 
     @Parameters("browser")
     @BeforeMethod
-    public void setUp(String browser, Method method) {
-        if (browser.equalsIgnoreCase("chrome")) {
+    public void setUp(@Optional String browser, Method method) {
+        String chosen = (browser != null && !browser.isBlank())
+                ? browser
+                : System.getProperty("browser", "chrome");
+        boolean headless = Boolean.parseBoolean(System.getProperty("headless", "true"));
+
+        if (chosen.equalsIgnoreCase("chrome")) {
             WebDriverManager.chromedriver().setup();
             ChromeOptions options = new ChromeOptions();
-            options.addArguments("--start-maximized");
-            options.addArguments("--force-device-scale-factor=1");
-            options.addArguments("--headless");
+            if (headless) {
+                options.addArguments(
+                        "--headless=new",
+                        "--window-size=1920,1080",
+                        "--no-sandbox",
+                        "--disable-dev-shm-usage",
+                        "--disable-gpu"
+                );
+            } else {
+                options.addArguments("--start-maximized", "--force-device-scale-factor=1");
+            }
             driver = new ChromeDriver(options);
-        } else if (browser.equalsIgnoreCase("firefox")) {
+            if (!headless) driver.manage().window().maximize();
+
+        } else if (chosen.equalsIgnoreCase("firefox")) {
             WebDriverManager.firefoxdriver().setup();
             FirefoxOptions options = new FirefoxOptions();
-            options.addArguments("--headless");
+            if (headless) options.addArguments("--headless");
             driver = new FirefoxDriver(options);
-            driver.manage().window().maximize();
+            if (headless) {
+                driver.manage().window().setSize(new org.openqa.selenium.Dimension(1920, 1080));
+            } else {
+                driver.manage().window().maximize();
+            }
+
         } else {
-            throw new IllegalArgumentException("Unsupported browser: " + browser);
+            throw new IllegalArgumentException("Unsupported browser: " + chosen);
         }
+
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
         driver.get(ConfigReaderUtil.getBaseUrl());
         initializePages();
@@ -64,8 +89,15 @@ public class BaseTest {
 
     @AfterMethod
     public void tearDown(ITestResult result) {
-        if (driver != null) {
-            driver.quit();
+        try {
+            switch (result.getStatus()) {
+                case ITestResult.FAILURE -> LogUtil.failWithScreenshot(
+                        driver, "Test failed: " + result.getName(), result.getThrowable());
+                case ITestResult.SUCCESS -> LogUtil.pass("Test Passed: " + result.getName());
+                case ITestResult.SKIP -> LogUtil.skip("Test Skipped: " + result.getName());
+            }
+        } finally {
+            if (driver != null) driver.quit();
         }
     }
 

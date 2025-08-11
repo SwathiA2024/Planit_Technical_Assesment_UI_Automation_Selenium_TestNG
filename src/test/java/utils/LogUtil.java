@@ -34,4 +34,24 @@ public class LogUtil {
             }
         }
     }
+
+    public static void failWithScreenshot(WebDriver driver, String message, Throwable t) {
+        if (test == null) return;
+        try {
+            String screenshotPath = ScreenshotUtils.takeScreenshot(
+                    driver, ("FAIL_" + message).replaceAll("[\\s,:]", "_") + "_" + System.currentTimeMillis());
+            test.fail(t != null ? t : new AssertionError(message),
+                    MediaEntityBuilder.createScreenCaptureFromPath(screenshotPath).build());
+        } catch (Exception e) {
+            test.fail(message + " (screenshot unavailable: " + e.getMessage() + ")");
+        }
+    }
+
+    public static void pass(String message) {
+        if (test != null) test.pass(message);
+    }
+
+    public static void skip(String message) {
+        if (test != null) test.skip(message);
+    }
 }
