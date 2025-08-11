@@ -3,50 +3,42 @@ pipeline {
   options { timestamps() }
 
   tools {
-    jdk   'temurin-17'      // must exist in Manage Jenkins → Tools
-    maven 'Maven 3.9.x'     // must exist in Manage Jenkins → Tools
+    jdk   'temurin-17'
+    maven 'Maven 3.9.x'
   }
 
   parameters {
-    string(name: 'suiteFile', defaultValue: 'testng.xml', description: 'Path to TestNG suite file')
-    choice(name: 'browser', choices: ['', 'chrome', 'firefox'], description: 'Override browser (blank = use testng.xml)')
-    booleanParam(name: 'headless', defaultValue: true, description: 'Run headless in CI')
+    string(name: 'suiteFile', defaultValue: 'src/test/resources/testng.xml')
+    choice(name: 'browser', choices: ['', 'chrome', 'firefox'])
+    booleanParam(name: 'headless', defaultValue: true)
   }
 
   stages {
     stage('Checkout') { steps { checkout scm } }
 
-    stage('Preflight (verify suite path)') {
+    stage('Verify Suite File') {
       steps {
         bat """
-          echo ===== Check suite path =====
           if exist "%suiteFile%" (
-            echo FOUND suite: %suiteFile%
+            echo FOUND: %suiteFile%
           ) else (
-            echo ERROR: suite not found at %suiteFile%
-            echo Try: testng.xml  OR  src\\test\\resources\\testng.xml
+            echo MISSING: %suiteFile%
             exit /b 2
           )
         """
       }
     }
 
-    stage('Run TestNG Suite') {
+    stage('Run Tests') {
       steps {
         script {
-          def props = [
-            "-Dsurefire.suiteXmlFiles=${params.suiteFile}",
-            "-Dheadless=${params.headless}"
-          ]
+          def props = ["-Dsurefire.suiteXmlFiles=${params.suiteFile}", "-Dheadless=${params.headless}"]
           if (params.browser?.trim()) props << "-Dbrowser=${params.browser.trim()}"
           def propsLine = props.join(' ')
-
           bat """
-            echo ===== Java =====
             java -version
-
             if exist mvnw.cmd (
-              .\\mvnw.cmd -B -U -V clean test ${propsLine}
+              call .\\mvnw.cmd -B -U -V clean test ${propsLine}
             ) else (
               mvn -B -U -V clean test ${propsLine}
             )
@@ -58,19 +50,16 @@ pipeline {
 
   post {
     always {
-      // Publish ONLY Extent HTML
+      junit 'target/surefire-reports/*.xml'
       publishHTML(target: [
-        reportDir: 'test-output',
-        reportFiles: 'ExtentReport.html',
-        reportName: 'Extent HTML Report',
+        reportDir: 'target/surefire-reports',
+        reportFiles: 'emailable-report.html,index.html',
+        reportName: 'TestNG HTML',
         keepAll: true,
         alwaysLinkToLastBuild: true,
         allowMissing: true
       ])
-
-      // Keep raw Extent assets & screenshots
-      archiveArtifacts artifacts: 'test-output/**/*, screenshots/**/*',
-                        allowEmptyArchive: true
+      archiveArtifacts artifacts: 'target/surefire-reports/**/*', allowEmptyArchive: false
     }
   }
 }
