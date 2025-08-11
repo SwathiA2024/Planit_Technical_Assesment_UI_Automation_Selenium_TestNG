@@ -6,12 +6,11 @@ pipeline {
     maven 'Maven 3.9.11'
   }
 
-  stages {
-    stage('Checkout') {
-      steps {
-        checkout scm
-      }
+  stage('Checkout Master') {
+    steps {
+      git branch: 'master'
     }
+  }
 
     stage('Run Tests') {
       steps {
