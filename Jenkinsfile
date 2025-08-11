@@ -2,28 +2,38 @@ pipeline {
   agent any
   options { timestamps() }
 
-  // Configure these in: Manage Jenkins → Tools
   tools {
-    jdk   'temurin-17'      // must match your JDK name in Tools
-    maven 'Maven 3.9.x'     // must match your Maven name in Tools
+    jdk   'temurin-17'      // must exist in Manage Jenkins → Tools
+    maven 'Maven 3.9.x'     // must exist in Manage Jenkins → Tools
   }
 
   parameters {
-    // Leave blank to use testng.xml as-is (e.g., both Chrome & Firefox from your suite)
+    string(name: 'suiteFile', defaultValue: 'testng.xml', description: 'Path to TestNG suite file')
     choice(name: 'browser', choices: ['', 'chrome', 'firefox'], description: 'Override browser (blank = use testng.xml)')
     booleanParam(name: 'headless', defaultValue: true, description: 'Run headless in CI')
-    string(name: 'suiteFile', defaultValue: 'testng.xml', description: 'Path to TestNG suite file')
   }
 
   stages {
-    stage('Checkout') {
-      steps { checkout scm }
+    stage('Checkout') { steps { checkout scm } }
+
+    stage('Preflight (verify suite path)') {
+      steps {
+        bat """
+          echo ===== Check suite path =====
+          if exist "%suiteFile%" (
+            echo FOUND suite: %suiteFile%
+          ) else (
+            echo ERROR: suite not found at %suiteFile%
+            echo Try: testng.xml  OR  src\\test\\resources\\testng.xml
+            exit /b 2
+          )
+        """
+      }
     }
 
-    stage('Build & Test') {
+    stage('Run TestNG Suite') {
       steps {
         script {
-          // Build property line for Surefire
           def props = [
             "-Dsurefire.suiteXmlFiles=${params.suiteFile}",
             "-Dheadless=${params.headless}"
@@ -31,7 +41,6 @@ pipeline {
           if (params.browser?.trim()) props << "-Dbrowser=${params.browser.trim()}"
           def propsLine = props.join(' ')
 
-          // Prefer Maven Wrapper; fallback to Jenkins Maven tool
           bat """
             echo ===== Java =====
             java -version
@@ -49,10 +58,7 @@ pipeline {
 
   post {
     always {
-      // Always publish JUnit XML for Jenkins test trend
-      junit 'target/surefire-reports/*.xml'
-
-      // Publish your Extent report from test-output
+      // Publish ONLY Extent HTML
       publishHTML(target: [
         reportDir: 'test-output',
         reportFiles: 'ExtentReport.html',
@@ -62,8 +68,8 @@ pipeline {
         allowMissing: true
       ])
 
-      // Keep artifacts (reports + screenshots)
-      archiveArtifacts artifacts: 'target/surefire-reports/**/*, test-output/**/*, screenshots/**/*',
+      // Keep raw Extent assets & screenshots
+      archiveArtifacts artifacts: 'test-output/**/*, screenshots/**/*',
                         allowEmptyArchive: true
     }
   }
