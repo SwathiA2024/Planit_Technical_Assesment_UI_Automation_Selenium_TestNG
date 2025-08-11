@@ -3,7 +3,7 @@ pipeline {
 
   tools {
     jdk 'temurin-17'
-    maven 'Maven 3.9.x'
+    maven 'Maven 3.9.11'
   }
 
   stages {
@@ -15,9 +15,10 @@ pipeline {
 
     stage('Run Tests') {
       steps {
-        bat 'mvn clean test -Dsurefire.suiteXmlFiles=src/test/resources/testng.xml -Dheadless=true'
+        bat 'mvn clean test -Dsurefire.suiteXmlFiles=src/test/resources/testng.xml -Dheadless=true -Dbrowser=chrome'
       }
     }
   }
+
 }
 
