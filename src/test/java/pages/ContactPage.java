@@ -1,5 +1,6 @@
 package pages;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -45,6 +46,8 @@ public class ContactPage extends BasePage {
 
     public void navigateToContactPage() {
         contactLink.click();
+        String contactPageUrl = "/contact";
+        isUserOnPage(driver, contactPageUrl, submitButton);
         waitForPageLoadComplete(10);
         LogUtil.logStepWithScreenshot(driver, "Navigate to Contact Page");
     }

@@ -18,7 +18,6 @@ import pages.ShopPage;
 import utils.ConfigReaderUtil;
 import utils.ExtentManager;
 import utils.LogUtil;
-import utils.ScreenshotUtils;
 
 
 import java.lang.reflect.Method;
@@ -83,7 +82,6 @@ public class BaseTest {
         driver.get(ConfigReaderUtil.getBaseUrl());
         initializePages();
         test = extent.createTest(method.getName());
-        ScreenshotUtils.setDriver(driver);
         LogUtil.setTest(test);
     }
 

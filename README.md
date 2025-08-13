@@ -62,18 +62,21 @@ PlanitProject/
 - Java 17 installed
 - Maven 3.9.x installed
 - Chrome & Firefox browsers installed
+- 
+**To run all tests for Chrome and FireFox**
+- mvn clean test
 
 **Run on Chrome (headless):**
-mvn clean test -Dsurefire.suiteXmlFiles=src/test/resources/testng.xml -Dbrowser=chrome -Dheadless=true
+mvn clean test -Dbrowser=chrome -Dheadless=true
 
 **Run on Chrome (headed):**
-mvn clean test -Dsurefire.suiteXmlFiles=src/test/resources/testng.xml -Dbrowser=chrome -Dheadless=false
+mvn clean test -Dbrowser=chrome -Dheadless=false
 
 **Run on FireFox (headless):**
-mvn clean test -Dsurefire.suiteXmlFiles=src/test/resources/testng.xml -Dbrowser=firefox -Dheadless=true
+mvn clean test -Dbrowser=firefox -Dheadless=true
 
 **Run on FireFox (headed):**
-mvn clean test -Dsurefire.suiteXmlFiles=src/test/resources/testng.xml -Dbrowser=firefox -Dheadless=false
+mvn clean test -Dbrowser=firefox -Dheadless=false
 
 🤖 Running in Jenkins
 This project includes a Jenkinsfile for CI execution.
@@ -100,7 +103,7 @@ Extent Report:
 <img width="955" height="462" alt="image" src="https://github.com/user-attachments/assets/b5675a56-4b1d-4af6-ba7a-c7ee75200dc7" />
 
 Failure Report:
-<img width="953" height="359" alt="image" src="https://github.com/user-attachments/assets/1f52cf18-06c2-445b-bbe5-4eafb9ad27a9" />
+![img.png](img.png)
 
 Jenkins run:
 <img width="948" height="464" alt="image" src="https://github.com/user-attachments/assets/a35c27ed-eed6-4345-a098-b796746e9732" />

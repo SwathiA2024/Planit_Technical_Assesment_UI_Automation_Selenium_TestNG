@@ -14,7 +14,7 @@ pipeline {
     stage('Run Tests') {
       steps {
         bat 'mvn clean test -Dsurefire.suiteXmlFiles=src/test/resources/testng.xml -Dheadless=true -Dbrowser=chrome'
+      }
     }
-}
-}
+  }
 }

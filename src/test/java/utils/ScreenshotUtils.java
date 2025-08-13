@@ -8,13 +8,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static pages.BasePage.driver;
-
 public class ScreenshotUtils {
-
-    public static void setDriver(WebDriver webDriver) {
-        driver = webDriver;
-    }
 
     public static String takeScreenshot(WebDriver driver, String testName) {
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss_SSS").format(new Date());

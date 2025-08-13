@@ -9,6 +9,9 @@ import utils.LogUtil;
 
 public class ShopPage extends BasePage {
 
+    @FindBy(xpath = "//div[@class='products ng-scope']")
+    private WebElement Products;
+
     @FindBy(id = "nav-shop")
     private WebElement shopLink;
 
@@ -17,9 +20,11 @@ public class ShopPage extends BasePage {
         PageFactory.initElements(driver, this);
     }
 
-    public void goToShopPage() {
+    public void navigateToShopPage() {
         waitForWebElementVisibility(shopLink);
         shopLink.click();
+        String shopPageUrl = "/shop";
+        isUserOnPage(driver, shopPageUrl, Products);
         LogUtil.logStep("Navigate to Shop page");
     }
 

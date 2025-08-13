@@ -28,6 +28,8 @@ public class CartPage extends BasePage {
 
     public void goToCartPage() {
         cartLink.click();
+        String cartPageUrlContainsCart = "/cart";
+        isUserOnPage(driver, cartPageUrlContainsCart);
         LogUtil.logStep("Navigate to Cart Page");
     }
 

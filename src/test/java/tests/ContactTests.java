@@ -6,7 +6,7 @@ import org.testng.annotations.Test;
 
 public class ContactTests extends BaseTest {
 
-    @Test(description = "Verify contact page shows/removes error messages correctly")
+    @Test(description = "Verify contact page shows/removes error messages correctly", priority = 1)
     @Parameters({"forename", "email", "message"})
     public void testCase1_verifyContactPageErrorValidation(String forename, String email, String message) {
         contactPage.navigateToContactPage();
@@ -16,7 +16,7 @@ public class ContactTests extends BaseTest {
         contactPage.verifyNoErrorMessagesDisplayed();
     }
 
-    @Test(description = "Verify contact form submits successfully with valid data", invocationCount = 5)
+    @Test(description = "Verify contact form submits successfully with valid data", priority =2, invocationCount = 5)
     @Parameters({"forename", "email", "message"})
     public void testCase2_verifyContactFormSubmission(String forename, String email, String message) {
         contactPage.navigateToContactPage();

@@ -16,7 +16,7 @@ public class CartTests extends BaseTest {
         };
     }
 
-    @Test(description = "Verify cart subtotal and total calculations", dataProvider = "allProducts")
+    @Test(description = "Verify cart subtotal and total calculations", priority = 3, dataProvider = "allProducts")
     public void testCase3_verifyCartPriceCalculations(String[] productNames, int[] quantities) {
         homePage.clickOnStartShoppingButton();
         for (int i = 0; i < productNames.length; i++) {
@@ -26,7 +26,7 @@ public class CartTests extends BaseTest {
             shopPage.addProductQuantity(productName, quantity);
             cartPage.goToCartPage();
             cartPage.verifyProductPriceMatchesShopPageProductPrice(productName, price);
-            shopPage.goToShopPage();
+            shopPage.navigateToShopPage();
         }
         cartPage.goToCartPage();
         for (String productName : productNames) {
