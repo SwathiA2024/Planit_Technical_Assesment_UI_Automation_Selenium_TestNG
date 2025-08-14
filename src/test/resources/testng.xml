@@ -1,0 +1,23 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+<suite name="Suite">
+    <test name="ChromeTests">
+        <parameter name="forename" value="Swathi"/>
+        <parameter name="email" value="swathipriya5161@gmail.com"/>
+        <parameter name="message" value="This is a test message"/>
+        <parameter name="browser" value="chrome"/>
+        <classes>
+            <class name="tests.ContactTests"/>
+            <class name="tests.CartTests"/>
+        </classes>
+    </test>
+    <test name="FirefoxTests">
+        <parameter name="forename" value="Swathi"/>
+        <parameter name="email" value="swathipriya5161@gmail.com"/>
+        <parameter name="message" value="This is a test message"/>
+        <parameter name="browser" value="firefox"/>
+        <classes>
+            <class name="tests.ContactTests"/>
+            <class name="tests.CartTests"/>
+        </classes>
+    </test>
+</suite>
